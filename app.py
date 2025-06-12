@@ -34,10 +34,19 @@ def preencher_docx(dados, fotos):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        dados = {campo: request.form.get(campo, '') for campo in [
-            'nroOS', 'DATA', 'Nome_Tecnico', 'Nome_Cliente', 'Endereco_Cliente',
-            'Telefone_cliente', 'Modelo_equipamento', 'Numero_Serie',
-            'Chamado_Aberto', 'Defeitos_Encontrados', 'Tarefas_Executadas']}
+        dados = {
+    'nroOS': request.form.get('nroOS', ''),
+    'DATA': request.form.get('DATA', ''),
+    'Nome Técnico': request.form.get('Nome_Tecnico', ''),
+    'Nome Cliente': request.form.get('Nome_Cliente', ''),
+    'Endereço Cliente': request.form.get('Endereco_Cliente', ''),
+    'Telefone_cliente': request.form.get('Telefone_cliente', ''),
+    'Modelo_equipamento': request.form.get('Modelo_equipamento', ''),
+    'Numero Serie': request.form.get('Numero_Serie', ''),
+    'Chamado Aberto': request.form.get('Chamado_Aberto', ''),
+    'Defeitos Encontrados': request.form.get('Defeitos_Encontrados', ''),
+    'Tarefas Executadas': request.form.get('Tarefas_Executadas', ''),
+}
 
         fotos = {}
         for i in range(1, 5):
