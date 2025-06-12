@@ -13,9 +13,13 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def preencher_docx(dados, fotos):
     doc = Document("MODELO_LAUDO.docx")
     for p in doc.paragraphs:
-        for chave, valor in dados.items():
-            if f"{{{{{chave}}}}}" in p.text:
-                p.text = p.text.replace(f"{{{{{chave}}}}}", valor)
+    for chave, valor in dados.items():
+        alvo = f"{{{{{chave}}}}}"
+        if alvo in p.text:
+            for run in p.runs:
+                if alvo in run.text:
+                    run.text = run.text.replace(alvo, valor)
+
 
     tabelas = doc.tables
     if tabelas:
