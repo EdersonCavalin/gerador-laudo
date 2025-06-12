@@ -19,8 +19,6 @@ def preencher_docx(dados, fotos):
             for run in p.runs:
                 if alvo in run.text:
                     run.text = run.text.replace(alvo, valor)
-
-
     tabelas = doc.tables
     if tabelas:
         tabela = tabelas[-1]
