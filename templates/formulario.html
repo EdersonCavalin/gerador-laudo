@@ -1,76 +1,113 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Gerador de Laudo Técnico</title>
-    <style>
-      body { background-color: #fff; font-family: Arial, sans-serif; color: #333; margin:0; padding:0; }
-      header { background-color: #fff; padding: 20px; text-align: center; border-bottom: 4px solid #E53935; }
-      header img { max-height: 60px; }
-      main { max-width: 800px; margin: 40px auto; padding: 0 20px; }
-      h1 { color: #E53935; text-align: center; }
-      form label { display: block; margin-top: 15px; font-weight: bold; }
-      form input[type="text"],
-      form input[type="date"],
-      form input[type="tel"],
-      form textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-      form button { margin-top: 25px; background-color: #E53935; color: #fff; border: none; padding: 12px 24px; font-size: 1rem; border-radius: 4px; cursor: pointer; }
-      form button:hover { background-color: #C62828; }
-      .photo-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 15px; }
-      .photo-group label { flex: 0 0 120px; margin: 0; }
-      .photo-group input[type="file"] { flex: 1; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Gerador de Laudo Técnico</title>
+  <style>
+    body { background: #fff; font-family: Arial, sans-serif; color: #333; margin: 0; padding: 0; }
+    header { text-align: center; padding: 20px; border-bottom: 4px solid #E53935; }
+    header img { max-height: 60px; }
+    main { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+    h1 { text-align: center; color: #E53935; margin-bottom: 30px; }
+    form { display: flex; flex-direction: column; gap: 20px; }
+
+    .inline-group { display: flex; gap: 20px; }
+    .inline-group > * { flex: 1; }
+    .inline-group.small > * { flex: 0 0 auto; }
+
+    label { font-weight: bold; margin-bottom: 5px; }
+    input[type="text"],
+    input[type="date"],
+    input[type="tel"],
+    textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+    textarea { resize: vertical; }
+    button { background: #E53935; color: #fff; border: none; padding: 12px; font-size: 1rem; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #C62828; }
+
+    .photos-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .photos-table th, .photos-table td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+  </style>
 </head>
 <body>
   <header>
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo MEMO">
+    <img src="{{ url_for('static', filename='uploads/logo.png') }}" alt="Logo MEMO">
   </header>
   <main>
     <h1>Gerador de Laudo Técnico</h1>
     <form method="post" enctype="multipart/form-data">
-      <label for="nroOS">OS (Número e Texto):</label>
-      <input type="text" id="nroOS" name="nroOS" maxlength="10" required>
-
-      <label for="DATA">Data:</label>
-      <input type="date" id="DATA" name="DATA" required>
-
-      <label for="Nome_Tecnico">Nome do Técnico:</label>
-      <input type="text" id="Nome_Tecnico" name="Nome_Tecnico" maxlength="50" required>
-
-      <label for="Nome_Cliente">Nome do Cliente:</label>
-      <input type="text" id="Nome_Cliente" name="Nome_Cliente" maxlength="50" required>
-
-      <label for="Endereco_Cliente">Endereço de Atendimento:</label>
-      <input type="text" id="Endereco_Cliente" name="Endereco_Cliente" maxlength="100" required>
-
-      <label for="Telefone_cliente">Telefone do Cliente:</label>
-      <input type="tel" id="Telefone_cliente" name="Telefone_cliente" maxlength="15" pattern="\d*">
-
-      <label for="Modelo_equipamento">Modelo do Equipamento:</label>
-      <input type="text" id="Modelo_equipamento" name="Modelo_equipamento" maxlength="30">
-
-      <label for="Numero_Serie">Nº de Série:</label>
-      <input type="text" id="Numero_Serie" name="Numero_Serie" maxlength="20">
-
-      <label for="Chamado_Aberto">Motivo do Chamado:</label>
-      <textarea id="Chamado_Aberto" name="Chamado_Aberto" rows="3" maxlength="200"></textarea>
-
-      <label for="Defeitos_Encontrados">Defeitos Encontrados:</label>
-      <textarea id="Defeitos_Encontrados" name="Defeitos_Encontrados" rows="5" maxlength="500"></textarea>
-
-      <label for="Tarefas_Executadas">Tarefas Executadas:</label>
-      <textarea id="Tarefas_Executadas" name="Tarefas_Executadas" rows="5" maxlength="500"></textarea>
-
-      <h2>Fotos Antes e Depois</h2>
-      {% for i in range(1,5) %}
-      <div class="photo-group">
-        <label for="foto{{ i }}_antes">Foto {{ i }} Antes:</label>
-        <input type="file" id="foto{{ i }}_antes" name="foto{{ i }}_antes">
-
-        <label for="foto{{ i }}_depois">Foto {{ i }} Depois:</label>
-        <input type="file" id="foto{{ i }}_depois" name="foto{{ i }}_depois">
+      <div class="inline-group small">
+        <div>
+          <label for="nroOS">OS</label>
+          <input type="text" id="nroOS" name="nroOS" maxlength="10" required>
+        </div>
+        <div>
+          <label for="DATA">Data</label>
+          <input type="date" id="DATA" name="DATA" required>
+        </div>
+        <div>
+          <label for="Nome_Tecnico">Técnico</label>
+          <input type="text" id="Nome_Tecnico" name="Nome_Tecnico" maxlength="15" required>
+        </div>
       </div>
-      {% endfor %}
+
+      <div class="inline-group">
+        <div>
+          <label for="Nome_Cliente">Cliente</label>
+          <input type="text" id="Nome_Cliente" name="Nome_Cliente" maxlength="30" required>
+        </div>
+        <div>
+          <label for="Telefone_cliente">Telefone</label>
+          <input type="tel" id="Telefone_cliente" name="Telefone_cliente" maxlength="15">
+        </div>
+      </div>
+
+      <div>
+        <label for="Endereco_Cliente">Endereço de Atendimento</label>
+        <input type="text" id="Endereco_Cliente" name="Endereco_Cliente" maxlength="100">
+      </div>
+
+      <div class="inline-group">
+        <div>
+          <label for="Modelo_equipamento">Modelo Equip.</label>
+          <input type="text" id="Modelo_equipamento" name="Modelo_equipamento" maxlength="30">
+        </div>
+        <div>
+          <label for="Numero_Serie">Nº de Série</label>
+          <input type="text" id="Numero_Serie" name="Numero_Serie" maxlength="25">
+        </div>
+      </div>
+
+      <div>
+        <label for="Chamado_Aberto">Motivo do Chamado</label>
+        <textarea id="Chamado_Aberto" name="Chamado_Aberto" rows="2" maxlength="200"></textarea>
+      </div>
+
+      <div>
+        <label for="Defeitos_Encontrados">Defeitos Encontrados</label>
+        <textarea id="Defeitos_Encontrados" name="Defeitos_Encontrados" rows="3" maxlength="500"></textarea>
+      </div>
+
+      <div>
+        <label for="Tarefas_Executadas">Tarefas Executadas</label>
+        <textarea id="Tarefas_Executadas" name="Tarefas_Executadas" rows="3" maxlength="500"></textarea>
+      </div>
+
+      <div>
+        <label>Fotos Antes e Depois</label>
+        <table class="photos-table">
+          <thead>
+            <tr><th>Antes</th><th>Depois</th></tr>
+          </thead>
+          <tbody>
+            {% for i in range(1,5) %}
+            <tr>
+              <td><input type="file" name="foto{{ i }}_antes"></td>
+              <td><input type="file" name="foto{{ i }}_depois"></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
       <button type="submit">Gerar Laudo</button>
     </form>
