@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, send_file
-from docx import Document
+from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Inches
 import os
 from datetime import datetime
@@ -9,56 +9,20 @@ UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-def substituir_placeholders(paragraphs, dados):
-    for p in paragraphs:
-        text = p.text
-        for chave, valor in dados.items():
-            alvo = f"{{{{{chave}}}}}"
-            if alvo in text:
-                text = text.replace(alvo, valor)
-        # reescreve todo o parágrafo com o texto substituído
-        p.clear()               # remove runs antigos
-        p.add_run(text)         # adiciona um único run com o texto novo
-
 def preencher_docx(dados, fotos):
-    doc = Document("MODELO_LAUDO.docx")
+    tpl = DocxTemplate("MODELO_LAUDO.docx")
 
-    # 1) corpo do documento
-    substituir_placeholders(doc.paragraphs, dados)
-    for table in doc.tables:
-        for row in table.rows:
-            for cell in row.cells:
-                substituir_placeholders(cell.paragraphs, dados)
+    # Converte cada foto para InlineImage (mantém formatação)
+    for i in range(1, 5):
+        if f"foto{i}_antes" in fotos:
+            dados[f"foto{i}_antes"] = InlineImage(tpl, fotos[f"foto{i}_antes"], width=Inches(2))
+        if f"foto{i}_depois" in fotos:
+            dados[f"foto{i}_depois"] = InlineImage(tpl, fotos[f"foto{i}_depois"], width=Inches(2))
 
-    # 2) cabeçalhos/rodapés (se houver)
-    for section in doc.sections:
-        substituir_placeholders(section.header.paragraphs, dados)
-        for table in section.header.tables:
-            for row in table.rows:
-                for cell in row.cells:
-                    substituir_placeholders(cell.paragraphs, dados)
-        substituir_placeholders(section.footer.paragraphs, dados)
-        for table in section.footer.tables:
-            for row in table.rows:
-                for cell in row.cells:
-                    substituir_placeholders(cell.paragraphs, dados)
-
-    # 3) insere as fotos na última tabela do corpo
-    tabelas = doc.tables
-    if tabelas:
-        tabela = tabelas[-1]
-        for i in range(1, 5):
-            antes = fotos.get(f"foto{i}_antes")
-            depois = fotos.get(f"foto{i}_depois")
-            if antes:
-                tabela.cell(i, 0).paragraphs[0].add_run().add_picture(antes, width=Inches(2))
-            if depois:
-                tabela.cell(i, 1).paragraphs[0].add_run().add_picture(depois, width=Inches(2))
-
-    # 4) salva e retorna
-    nome_arquivo = f"laudo_{dados['nroOS']}_{datetime.now():%Y%m%d%H%M%S}.docx"
-    caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
-    doc.save(caminho)
+    tpl.render(dados)
+    nome = f"laudo_{dados['nroOS']}_{datetime.now():%Y%m%d%H%M%S}.docx"
+    caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome)
+    tpl.save(caminho)
     return caminho
 
 @app.route("/", methods=["GET", "POST"])
@@ -83,9 +47,9 @@ def index():
             for tipo in ("antes", "depois"):
                 file = request.files.get(f"foto{i}_{tipo}")
                 if file and file.filename:
-                    path = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
-                    file.save(path)
-                    fotos[f"foto{i}_{tipo}"] = path
+                    caminho = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
+                    file.save(caminho)
+                    fotos[f"foto{i}_{tipo}"] = caminho
 
         caminho_docx = preencher_docx(dados, fotos)
         return send_file(caminho_docx, as_attachment=True)
