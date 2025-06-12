@@ -11,24 +11,26 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def substituir_placeholders(paragraphs, dados):
     for p in paragraphs:
+        text = p.text
         for chave, valor in dados.items():
             alvo = f"{{{{{chave}}}}}"
-            if alvo in p.text:
-                for run in p.runs:
-                    if alvo in run.text:
-                        run.text = run.text.replace(alvo, valor)
+            if alvo in text:
+                text = text.replace(alvo, valor)
+        # reescreve todo o parágrafo com o texto substituído
+        p.clear()               # remove runs antigos
+        p.add_run(text)         # adiciona um único run com o texto novo
 
 def preencher_docx(dados, fotos):
     doc = Document("MODELO_LAUDO.docx")
 
-    # 1) Corpo do documento
+    # 1) corpo do documento
     substituir_placeholders(doc.paragraphs, dados)
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
                 substituir_placeholders(cell.paragraphs, dados)
 
-    # 2) Cabeçalhos e rodapés
+    # 2) cabeçalhos/rodapés (se houver)
     for section in doc.sections:
         substituir_placeholders(section.header.paragraphs, dados)
         for table in section.header.tables:
@@ -41,7 +43,7 @@ def preencher_docx(dados, fotos):
                 for cell in row.cells:
                     substituir_placeholders(cell.paragraphs, dados)
 
-    # 3) Inserção das fotos na última tabela do corpo
+    # 3) insere as fotos na última tabela do corpo
     tabelas = doc.tables
     if tabelas:
         tabela = tabelas[-1]
@@ -53,7 +55,7 @@ def preencher_docx(dados, fotos):
             if depois:
                 tabela.cell(i, 1).paragraphs[0].add_run().add_picture(depois, width=Inches(2))
 
-    # 4) Salvar com nome único
+    # 4) salva e retorna
     nome_arquivo = f"laudo_{dados['nroOS']}_{datetime.now():%Y%m%d%H%M%S}.docx"
     caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
     doc.save(caminho)
@@ -85,8 +87,8 @@ def index():
                     file.save(path)
                     fotos[f"foto{i}_{tipo}"] = path
 
-        saída = preencher_docx(dados, fotos)
-        return send_file(saída, as_attachment=True)
+        caminho_docx = preencher_docx(dados, fotos)
+        return send_file(caminho_docx, as_attachment=True)
 
     return render_template("formulario.html")
 
