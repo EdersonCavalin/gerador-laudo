@@ -12,13 +12,15 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def preencher_docx(dados, fotos):
     doc = Document("MODELO_LAUDO.docx")
+    
     for p in doc.paragraphs:
-    for chave, valor in dados.items():
-        alvo = f"{{{{{chave}}}}}"
-        if alvo in p.text:
-            for run in p.runs:
-                if alvo in run.text:
-                    run.text = run.text.replace(alvo, valor)
+        for chave, valor in dados.items():
+            alvo = f"{{{{{chave}}}}}"
+            if alvo in p.text:
+                for run in p.runs:
+                    if alvo in run.text:
+                        run.text = run.text.replace(alvo, valor)
+
     tabelas = doc.tables
     if tabelas:
         tabela = tabelas[-1]
@@ -37,18 +39,18 @@ def preencher_docx(dados, fotos):
 def index():
     if request.method == 'POST':
         dados = {
-    'nroOS': request.form.get('nroOS', ''),
-    'DATA': request.form.get('DATA', ''),
-    'Nome Técnico': request.form.get('Nome_Tecnico', ''),
-    'Nome Cliente': request.form.get('Nome_Cliente', ''),
-    'Endereço Cliente': request.form.get('Endereco_Cliente', ''),
-    'Telefone_cliente': request.form.get('Telefone_cliente', ''),
-    'Modelo_equipamento': request.form.get('Modelo_equipamento', ''),
-    'Numero Serie': request.form.get('Numero_Serie', ''),
-    'Chamado Aberto': request.form.get('Chamado_Aberto', ''),
-    'Defeitos Encontrados': request.form.get('Defeitos_Encontrados', ''),
-    'Tarefas Executadas': request.form.get('Tarefas_Executadas', ''),
-}
+            'nroOS': request.form.get('nroOS', ''),
+            'DATA': request.form.get('DATA', ''),
+            'Nome Técnico': request.form.get('Nome_Tecnico', ''),
+            'Nome Cliente': request.form.get('Nome_Cliente', ''),
+            'Endereço Cliente': request.form.get('Endereco_Cliente', ''),
+            'Telefone_cliente': request.form.get('Telefone_cliente', ''),
+            'Modelo_equipamento': request.form.get('Modelo_equipamento', ''),
+            'Numero Serie': request.form.get('Numero_Serie', ''),
+            'Chamado Aberto': request.form.get('Chamado_Aberto', ''),
+            'Defeitos Encontrados': request.form.get('Defeitos_Encontrados', ''),
+            'Tarefas Executadas': request.form.get('Tarefas_Executadas', ''),
+        }
 
         fotos = {}
         for i in range(1, 5):
@@ -67,4 +69,3 @@ def index():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
