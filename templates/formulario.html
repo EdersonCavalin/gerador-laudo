@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerador de Laudo</title>
+</head>
+<body>
+    <h1>Preencher Laudo Técnico</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% for field in ['nroOS', 'DATA', 'Nome_Tecnico', 'Nome_Cliente', 'Endereco_Cliente', 
+                         'Telefone_cliente', 'Modelo_equipamento', 'Numero_Serie', 
+                         'Chamado_Aberto', 'Defeitos_Encontrados', 'Tarefas_Executadas'] %}
+            <label>{{ field.replace('_', ' ') }}:</label><br>
+            <textarea name="{{ field }}" rows="2" cols="50"></textarea><br><br>
+        {% endfor %}
+
+        <h3>Fotos Antes e Depois:</h3>
+        {% for i in range(1, 5) %}
+            Foto {{ i }} Antes: <input type="file" name="foto{{ i }}_antes"><br>
+            Foto {{ i }} Depois: <input type="file" name="foto{{ i }}_depois"><br><br>
+        {% endfor %}
+
+        <button type="submit">Gerar Laudo</button>
+    </form>
+</body>
+</html>
