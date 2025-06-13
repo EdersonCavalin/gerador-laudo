@@ -30,7 +30,7 @@
 </head>
 <body>
   <header>
-    <img src="{{ url_for('static', filename='uploads/logo.jpg') }}" alt="Logo MEMO">
+    <img src="{{ url_for('static', filename='uploads/logo.png') }}" alt="Logo MEMO">
   </header>
   <main>
     <h1>Gerador de Laudo Técnico</h1>
@@ -78,18 +78,21 @@
       </div>
 
       <div>
+        <div>
         <label for="Chamado_Aberto">Motivo do Chamado</label>
-        <textarea id="Chamado_Aberto" name="Chamado_Aberto" rows="2" maxlength="200"></textarea>
+        <textarea id="Chamado_Aberto" name="Chamado_Aberto" rows="1" maxlength="30"></textarea>
       </div>
 
       <div>
+        <div>
         <label for="Defeitos_Encontrados">Defeitos Encontrados</label>
-        <textarea id="Defeitos_Encontrados" name="Defeitos_Encontrados" rows="3" maxlength="500"></textarea>
+        <textarea id="Defeitos_Encontrados" name="Defeitos_Encontrados" rows="3"></textarea>
       </div>
 
       <div>
+        <div>
         <label for="Tarefas_Executadas">Tarefas Executadas</label>
-        <textarea id="Tarefas_Executadas" name="Tarefas_Executadas" rows="3" maxlength="500"></textarea>
+        <textarea id="Tarefas_Executadas" name="Tarefas_Executadas" rows="5"></textarea>
       </div>
 
       <div>
